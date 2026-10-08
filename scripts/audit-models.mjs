@@ -1,0 +1,13 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+const file='public/models/AF-P15502-F1-model_v6.pdb',bytes=fs.readFileSync(file),text=bytes.toString();
+const source=JSON.parse(fs.readFileSync('public/models/provenance.json','utf8'));
+const names={ALA:'A',ARG:'R',ASN:'N',ASP:'D',CYS:'C',GLN:'Q',GLU:'E',GLY:'G',HIS:'H',ILE:'I',LEU:'L',LYS:'K',MET:'M',PHE:'F',PRO:'P',SER:'S',THR:'T',TRP:'W',TYR:'Y',VAL:'V'};
+const ca=text.split(/\r?\n/).filter(l=>l.startsWith('ATOM')&&l.slice(12,16).trim()==='CA');
+assert.equal(ca.length,786);assert.equal(ca.map(l=>names[l.slice(17,20)]).join(''),source.sequence);
+ca.forEach((l,i)=>{assert.equal(l[21],'A');assert.equal(Number(l.slice(22,26)),i+1);});
+const confidence=ca.map(l=>Number(l.slice(60,66))),average=confidence.reduce((a,b)=>a+b)/ca.length;
+assert(Math.abs(average-source.meanPLDDT)<.02);assert.equal(source.sequence[775],'C');assert.equal(source.sequence[780],'C');
+const result={residues:786,chain:'A',signal:'1–26',processed:'27–786',meanPLDDT:average,below50:confidence.filter(x=>x<50).length,sha256:createHash('sha256').update(bytes).digest('hex'),status:'verified',interpretation:source.interpretation};
+fs.mkdirSync('evidence',{recursive:true});fs.writeFileSync('evidence/model-audit.json',JSON.stringify(result,null,2));console.log(result);

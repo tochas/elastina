@@ -1,0 +1,23 @@
+{
+  "intro": true,
+  "sequence": true,
+  "structure": true,
+  "bridges": true,
+  "organization": true,
+  "chemistry": true,
+  "interaction": true,
+  "damage": true,
+  "application": true,
+  "complete": true,
+  "tour-0": true,
+  "tour-1": true,
+  "tour-2": true,
+  "tour-3": true,
+  "tour-4": true,
+  "tour-5": true,
+  "tour-6": true,
+  "tour-7": true,
+  "tour-8": true,
+  "tour-9": true,
+  "tour-10": true
+}
